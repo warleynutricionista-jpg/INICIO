@@ -182,8 +182,12 @@ local function destroyPreviewCam()
 end
 
 local function restorePlayerPedState()
-    local ped = cache.ped
+    local ped = PlayerPedId()
     if not ped or ped == 0 then return end
+
+    if cache.ped ~= ped then
+        cache:set('ped', ped)
+    end
 
     SetEntityVisible(ped, true, false)
     ResetEntityAlpha(ped)
@@ -658,7 +662,7 @@ local function chooseCharacter()
                             elseif GetResourceState('qbx_apartments'):find('start') and config.characters.startingApartment then
                                 TriggerEvent('apartments:client:setupSpawnUI', character.citizenid)
                             elseif GetResourceState('qbx_spawn'):find('start') then
-                                TriggerEvent('qb-spawn:client:setupSpawns', character.citizenid)
+                                TriggerEvent('qb-spawn:client:setupSpawns')
                                 TriggerEvent('qb-spawn:client:openUI', true)
                             else
                                 spawnLastLocation()
@@ -762,7 +766,8 @@ RegisterNetEvent('qbx_core:client:firstCharacterAppearanceFinished', function()
     elseif GetResourceState('qbx_apartments'):find('start') and config.characters.startingApartment then
         TriggerEvent('apartments:client:setupSpawnUI', pendingCharacterCreationData)
     elseif GetResourceState('qbx_spawn'):find('start') then
-        TriggerEvent('qb-spawn:client:setupSpawns', pendingCharacterCreationData, true)
+        TriggerEvent('qb-spawn:client:setupSpawns')
+        TriggerEvent('qb-spawn:client:openUI', true)
     else
         spawnDefault()
     end
