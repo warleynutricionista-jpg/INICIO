@@ -182,8 +182,12 @@ local function destroyPreviewCam()
 end
 
 local function restorePlayerPedState()
-    local ped = cache.ped
+    local ped = PlayerPedId()
     if not ped or ped == 0 then return end
+
+    if cache.ped ~= ped then
+        cache:set('ped', ped)
+    end
 
     SetEntityVisible(ped, true, false)
     ResetEntityAlpha(ped)

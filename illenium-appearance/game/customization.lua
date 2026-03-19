@@ -555,6 +555,16 @@ function client.getHeading() return playerHeading end
 
 local callback
 function client.startPlayerCustomization(cb, conf)
+    local ped = PlayerPedId()
+    if cache.ped ~= ped then
+        cache:set('ped', ped)
+    end
+
+    SetEntityVisible(ped, true, false)
+    ResetEntityAlpha(ped)
+    SetEntityCollision(ped, true, true)
+    FreezeEntityPosition(ped, false)
+
     playerAppearance = client.getPedAppearance(cache.ped)
     playerCoords = GetEntityCoords(cache.ped, true)
     playerHeading = GetEntityHeading(cache.ped)
