@@ -295,13 +295,24 @@ end
 
 AddEventHandler('qb-spawn:client:setupSpawns', function(cData, new, apps)
     spawns = {}
-    if new then
+
+    if new and type(apps) == 'table' and next(apps) ~= nil then
         for k, v in pairs(apps) do
             spawns[#spawns+1] = {
                 first_time = true,
                 key = k,
                 label = v.label,
                 coords = vector3(v.door.x, v.door.y, v.door.z)
+            }
+        end
+    elseif new then
+        for i = 1, #config.spawns do
+            local spawn = config.spawns[i]
+            spawns[#spawns+1] = {
+                first_time = true,
+                label = spawn.label,
+                coords = spawn.coords,
+                propertyId = spawn.propertyId
             }
         end
     else
@@ -314,7 +325,7 @@ AddEventHandler('qb-spawn:client:setupSpawns', function(cData, new, apps)
             spawns[#spawns+1] = config.spawns[i]
         end
 
-        local houses = lib.callback.await('qbx_spawn:server:getHouses')
+        local houses = lib.callback.await('qbx_spawn:server:getHouses') or {}
 
         for i = 1, #houses do
             spawns[#spawns+1] = houses[i]
