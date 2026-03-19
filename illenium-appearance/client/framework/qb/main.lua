@@ -2,7 +2,8 @@ if not Framework.QBCore() then return end
 
 local client = client
 
-local QBCore = exports["qb-core"]:GetCoreObject()
+local coreResource = GetResourceState("qb-core") ~= "missing" and "qb-core" or "qbx_core"
+local QBCore = exports[coreResource]:GetCoreObject()
 
 local PlayerData = QBCore.Functions.GetPlayerData()
 
