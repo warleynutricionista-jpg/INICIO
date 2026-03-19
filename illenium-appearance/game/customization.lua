@@ -560,6 +560,13 @@ function client.startPlayerCustomization(cb, conf)
         cache:set('ped', ped)
     end
 
+    if IsScreenFadedOut() or IsScreenFadingOut() then
+        DoScreenFadeIn(500)
+        while not IsScreenFadedIn() do
+            Wait(0)
+        end
+    end
+
     SetEntityVisible(ped, true, false)
     ResetEntityAlpha(ped)
     SetEntityCollision(ped, true, true)
