@@ -1,5 +1,6 @@
 local config = require 'config.client'
 local defaultSpawn = require 'config.shared'.defaultSpawn
+local firstCharacterSpawn = vec4(-1037.8, -2738.06, 20.17, 319.56)
 
 -- Se estiver usando recurso externo de personagens, não carrega este script
 if config.characters.useExternalCharacters then return end
@@ -417,6 +418,35 @@ local function spawnDefault()
 
 end
 
+local function spawnFirstCharacter()
+    DoScreenFadeOut(500)
+
+    while not IsScreenFadedOut() do
+        Wait(0)
+    end
+
+    destroyPreviewCam()
+    restorePlayerPedState()
+
+    pcall(function()
+        exports.spawnmanager:spawnPlayer({
+            x = firstCharacterSpawn.x,
+            y = firstCharacterSpawn.y,
+            z = firstCharacterSpawn.z,
+            heading = firstCharacterSpawn.w
+        })
+    end)
+
+    TriggerServerEvent('QBCore:Server:OnPlayerLoaded')
+    TriggerEvent('QBCore:Client:OnPlayerLoaded')
+    TriggerServerEvent('qb-houses:server:SetInsideMeta', 0, false)
+    TriggerServerEvent('qb-apartments:server:SetInsideMeta', 0, 0, false)
+
+    while not IsScreenFadedIn() do
+        Wait(0)
+    end
+end
+
 local function spawnLastLocation()
     DoScreenFadeOut(500)
 
@@ -760,17 +790,7 @@ RegisterNetEvent('qbx_core:client:firstCharacterAppearanceFinished', function()
     if not pendingCharacterCreationData then return end
 
     TriggerServerEvent('qbx_core:server:characterCreationCompleted')
-
-    if GetResourceState('mri_Qspawn'):find('start') then
-        exports['mri_Qspawn']:chooseSpawn()
-    elseif GetResourceState('qbx_apartments'):find('start') and config.characters.startingApartment then
-        TriggerEvent('apartments:client:setupSpawnUI', pendingCharacterCreationData)
-    elseif GetResourceState('qbx_spawn'):find('start') then
-        TriggerEvent('qb-spawn:client:setupSpawns')
-        TriggerEvent('qb-spawn:client:openUI', true)
-    else
-        spawnDefault()
-    end
+    spawnFirstCharacter()
 
     pendingCharacterCreationData = nil
 end)
