@@ -114,6 +114,7 @@ function InitializeCharacter(gender, onSubmit, onCancel)
     client.startPlayerCustomization(function(appearance)
         if (appearance) then
             TriggerServerEvent("illenium-appearance:server:saveAppearance", appearance)
+            TriggerEvent('qbx_core:client:firstCharacterAppearanceFinished')
             if onSubmit then
                 onSubmit()
             end
